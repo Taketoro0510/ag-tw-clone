@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/labstack/echo/v4"
+	echomiddleware "github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -105,6 +106,10 @@ func main() {
 	e := echo.New()
 	e.HTTPErrorHandler = middleware.ErrorHandler(logger)
 	e.Use(middleware.Logger(logger))
+	e.Use(echomiddleware.CORSWithConfig(echomiddleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:5173", "http://127.0.0.1:5173"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
+	}))
 
 	// Swagger setup
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
