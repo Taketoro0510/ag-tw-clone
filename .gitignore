@@ -1,0 +1,26 @@
+# Backend
+backend/tmp/
+backend/vendor/
+backend/*.log
+backend/.env
+backend/.env.local
+
+# Frontend (future)
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
+# Secrets / credentials
+**/*credentials*.json
+**/*serviceAccount*.json
+**/secrets/**
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Docker
+.docker-data/
