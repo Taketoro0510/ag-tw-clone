@@ -58,7 +58,12 @@ func (u *authUseCase) Login(ctx context.Context, idToken string) (string, error)
 				UpdatedAt:   time.Now(),
 			}
 			if err := u.userRepo.Create(ctx, user); err != nil {
-				return "", err
+				// Retry fetching the user in case they were concurrently created by another request
+				if retryUser, retryErr := u.userRepo.FindByFirebaseUID(ctx, token.UID); retryErr == nil {
+					user = retryUser
+				} else {
+					return "", err
+				}
 			}
 		} else {
 			return "", err

@@ -227,6 +227,257 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/dto.ErrorResponse"
+  "/posts/{id}/comments":
+    get:
+      security:
+        - BearerAuth: []
+      description: Get comments for a post
+      tags:
+        - comments
+      summary: List comments
+      parameters:
+        - description: Post ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - description: Limit
+          name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - description: Cursor
+          name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.PaginatedCommentsResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+    post:
+      security:
+        - BearerAuth: []
+      description: Create a comment on a post
+      tags:
+        - comments
+      summary: Create a comment
+      parameters:
+        - description: Post ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/dto.CreateCommentRequest"
+        description: Comment info
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.Comment"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+  "/posts/{id}/comments/{commentId}":
+    delete:
+      security:
+        - BearerAuth: []
+      description: Delete own comment
+      tags:
+        - comments
+      summary: Delete a comment
+      parameters:
+        - description: Post ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - description: Comment ID
+          name: commentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+  "/comments/{id}/likes":
+    post:
+      security:
+        - BearerAuth: []
+      description: Like a comment
+      tags:
+        - likes
+      summary: Like a comment
+      parameters:
+        - description: Comment ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+    delete:
+      security:
+        - BearerAuth: []
+      description: Unlike a comment
+      tags:
+        - likes
+      summary: Unlike a comment
+      parameters:
+        - description: Comment ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+  "/comments/{id}/bookmarks":
+    post:
+      security:
+        - BearerAuth: []
+      description: Bookmark a comment
+      tags:
+        - bookmarks
+      summary: Bookmark a comment
+      parameters:
+        - description: Comment ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+    delete:
+      security:
+        - BearerAuth: []
+      description: Unbookmark a comment
+      tags:
+        - bookmarks
+      summary: Unbookmark a comment
+      parameters:
+        - description: Comment ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
   "/posts/{id}/likes":
     post:
       security:
@@ -294,6 +545,110 @@ paths:
                 $ref: "#/components/schemas/dto.ErrorResponse"
         "429":
           description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+  "/posts/{id}/bookmarks":
+    post:
+      security:
+        - BearerAuth: []
+      description: Bookmark a post
+      tags:
+        - bookmarks
+      summary: Bookmark a post
+      parameters:
+        - description: Post ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "429":
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+    delete:
+      security:
+        - BearerAuth: []
+      description: Unbookmark a post
+      tags:
+        - bookmarks
+      summary: Unbookmark a post
+      parameters:
+        - description: Post ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "429":
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+  "/bookmarks":
+    get:
+      security:
+        - BearerAuth: []
+      description: List bookmarked posts
+      tags:
+        - bookmarks
+      summary: List bookmarked posts
+      parameters:
+        - description: Limit
+          name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - description: Cursor
+          name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.PaginatedPostsResponse"
+        "401":
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -383,6 +738,125 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/dto.ErrorResponse"
+  "/users/{id}/follow":
+    post:
+      security:
+        - BearerAuth: []
+      description: Follow a user by ID
+      tags:
+        - follows
+      summary: Follow a user
+      parameters:
+        - description: User ID to follow
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+    delete:
+      security:
+        - BearerAuth: []
+      description: Unfollow a user by ID
+      tags:
+        - follows
+      summary: Unfollow a user
+      parameters:
+        - description: User ID to unfollow
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+  "/users/{id}/followers":
+    get:
+      security:
+        - BearerAuth: []
+      description: Get users who follow this user
+      tags:
+        - follows
+      summary: List followers
+      parameters:
+        - description: User ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/dto.User"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+  "/users/{id}/following":
+    get:
+      security:
+        - BearerAuth: []
+      description: Get users followed by this user
+      tags:
+        - follows
+      summary: List followings
+      parameters:
+        - description: User ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/dto.User"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
 servers:
   - url: //localhost:8080/api/v1
 components:
@@ -392,6 +866,43 @@ components:
       name: Authorization
       in: header
   schemas:
+    dto.CreateCommentRequest:
+      type: object
+      properties:
+        body:
+          type: string
+    dto.PaginatedCommentsResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/dto.Comment"
+        nextCursor:
+          type: string
+    dto.Comment:
+      type: object
+      properties:
+        id:
+          type: string
+        postId:
+          type: string
+        authorId:
+          type: string
+        author:
+          $ref: "#/components/schemas/dto.User"
+        body:
+          type: string
+        likeCount:
+          type: integer
+        likedByMe:
+          type: boolean
+        bookmarkCount:
+          type: integer
+        bookmarkedByMe:
+          type: boolean
+        createdAt:
+          type: string
     dto.CreatePostRequest:
       type: object
       properties:
@@ -440,6 +951,8 @@ components:
       properties:
         authorId:
           type: string
+        author:
+          $ref: "#/components/schemas/dto.User"
         body:
           type: string
         createdAt:
@@ -449,6 +962,10 @@ components:
         likeCount:
           type: integer
         likedByMe:
+          type: boolean
+        bookmarkCount:
+          type: integer
+        bookmarkedByMe:
           type: boolean
         mediaPath:
           type: string
@@ -476,3 +993,9 @@ components:
           type: string
         updatedAt:
           type: string
+        followersCount:
+          type: integer
+        followingCount:
+          type: integer
+        followedByMe:
+          type: boolean

@@ -91,17 +91,26 @@ func main() {
 	userRepo := repository.NewUserRepository(db)
 	postRepo := repository.NewPostRepository(db)
 	likeRepo := repository.NewLikeRepository(db)
+	bmRepo := repository.NewBookmarkRepository(db, postRepo)
+	commentRepo := repository.NewCommentRepository(db)
+	followRepo := repository.NewFollowRepository(db)
 
 	// UseCases
 	authUC := usecase.NewAuthUseCase(firebaseAuth, jwtService, userRepo, db)
-	userUC := usecase.NewUserUseCase(userRepo, postRepo, likeRepo)
-	postUC := usecase.NewPostUseCase(postRepo, likeRepo, db)
+	userUC := usecase.NewUserUseCase(userRepo, postRepo, likeRepo, bmRepo, followRepo)
+	postUC := usecase.NewPostUseCase(postRepo, likeRepo, bmRepo, db)
 	likeUC := usecase.NewLikeUseCase(likeRepo)
+	bmUC := usecase.NewBookmarkUseCase(bmRepo, likeRepo)
+	commentUC := usecase.NewCommentUseCase(commentRepo, userRepo, postRepo)
+	followUC := usecase.NewFollowUseCase(followRepo, userRepo)
 
 	// Handlers
 	authHandler := handler.NewAuthHandler(authUC)
 	userHandler := handler.NewUserHandler(userUC)
 	postHandler := handler.NewPostHandler(postUC, likeUC)
+	bmHandler := handler.NewBookmarkHandler(bmUC)
+	commentHandler := handler.NewCommentHandler(commentUC)
+	followHandler := handler.NewFollowHandler(followUC)
 
 	e := echo.New()
 	e.HTTPErrorHandler = middleware.ErrorHandler(logger)
@@ -124,19 +133,35 @@ func main() {
 		protected.Use(middleware.Auth(jwtService))
 		
 		protected.GET("/me", userHandler.GetMe)
-		protected.GET("/users/:id", userHandler.GetUser)
-		protected.GET("/users/:id/posts", userHandler.ListUserPosts)
 		
 		// Post rate limit
-		postLimit := middleware.RateLimit(5) // 5 per min
-		likeLimit := middleware.RateLimit(30) // 30 per min
+		postLimit := middleware.RateLimit(100) // 100 per min
 		
 		protected.GET("/posts", postHandler.ListPosts)
 		protected.POST("/posts", postHandler.CreatePost, postLimit)
 		protected.GET("/posts/:id", postHandler.GetPost)
 		protected.DELETE("/posts/:id", postHandler.DeletePost)
-		protected.POST("/posts/:id/likes", postHandler.LikePost, likeLimit)
-		protected.DELETE("/posts/:id/likes", postHandler.UnlikePost, likeLimit)
+		protected.POST("/posts/:id/likes", postHandler.LikePost, postLimit)
+		protected.DELETE("/posts/:id/likes", postHandler.UnlikePost, postLimit)
+		protected.POST("/posts/:id/bookmarks", bmHandler.BookmarkPost, postLimit)
+		protected.DELETE("/posts/:id/bookmarks", bmHandler.UnbookmarkPost, postLimit)
+
+		protected.GET("/posts/:id/comments", commentHandler.ListComments)
+		protected.POST("/posts/:id/comments", commentHandler.CreateComment, postLimit)
+		protected.DELETE("/posts/:id/comments/:commentId", commentHandler.DeleteComment)
+		protected.POST("/comments/:id/likes", commentHandler.LikeComment, postLimit)
+		protected.DELETE("/comments/:id/likes", commentHandler.UnlikeComment, postLimit)
+		protected.POST("/comments/:id/bookmarks", commentHandler.BookmarkComment, postLimit)
+		protected.DELETE("/comments/:id/bookmarks", commentHandler.UnbookmarkComment, postLimit)
+
+		protected.GET("/users/:id", userHandler.GetUser)
+		protected.GET("/users/:id/posts", userHandler.ListUserPosts)
+		protected.POST("/users/:id/follow", followHandler.FollowUser, postLimit)
+		protected.DELETE("/users/:id/follow", followHandler.UnfollowUser, postLimit)
+		protected.GET("/users/:id/followers", followHandler.ListFollowers)
+		protected.GET("/users/:id/following", followHandler.ListFollowings)
+		
+		protected.GET("/bookmarks", bmHandler.ListBookmarks)
 	}
 
 	port := os.Getenv("PORT")

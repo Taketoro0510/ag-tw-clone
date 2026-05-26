@@ -20,11 +20,12 @@ type PostUseCase interface {
 type postUseCase struct {
 	postRepo repository.PostRepository
 	likeRepo repository.LikeRepository
+	bmRepo   repository.BookmarkRepository
 	db       *gorm.DB
 }
 
-func NewPostUseCase(postRepo repository.PostRepository, likeRepo repository.LikeRepository, db *gorm.DB) PostUseCase {
-	return &postUseCase{postRepo: postRepo, likeRepo: likeRepo, db: db}
+func NewPostUseCase(postRepo repository.PostRepository, likeRepo repository.LikeRepository, bmRepo repository.BookmarkRepository, db *gorm.DB) PostUseCase {
+	return &postUseCase{postRepo: postRepo, likeRepo: likeRepo, bmRepo: bmRepo, db: db}
 }
 
 func (u *postUseCase) CreatePost(ctx context.Context, authorID string, body string, mediaType, mediaPath, mediaURL *string) (*domain.Post, error) {
@@ -66,9 +67,13 @@ func (u *postUseCase) GetTimeline(ctx context.Context, userID string, cursor str
 	for _, p := range posts {
 		count, _ := u.likeRepo.CountByPostID(ctx, p.ID)
 		p.LikeCount = count
+		bmCount, _ := u.bmRepo.CountByPostID(ctx, p.ID)
+		p.BookmarkCount = bmCount
 		if userID != "" {
 			liked, _ := u.likeRepo.IsLikedByUser(ctx, p.ID, userID)
 			p.LikedByMe = liked
+			bmed, _ := u.bmRepo.IsBookmarkedByUser(ctx, p.ID, userID)
+			p.BookmarkedByMe = bmed
 		}
 	}
 	return posts, nil
@@ -81,9 +86,13 @@ func (u *postUseCase) GetPost(ctx context.Context, userID, postID string) (*doma
 	}
 	count, _ := u.likeRepo.CountByPostID(ctx, post.ID)
 	post.LikeCount = count
+	bmCount, _ := u.bmRepo.CountByPostID(ctx, post.ID)
+	post.BookmarkCount = bmCount
 	if userID != "" {
 		liked, _ := u.likeRepo.IsLikedByUser(ctx, post.ID, userID)
 		post.LikedByMe = liked
+		bmed, _ := u.bmRepo.IsBookmarkedByUser(ctx, post.ID, userID)
+		post.BookmarkedByMe = bmed
 	}
 	return post, nil
 }

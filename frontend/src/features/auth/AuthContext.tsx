@@ -21,14 +21,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-      setLoading(false);
-    });
-
-    const handleRedirect = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        if (result?.user) {
-          const idToken = await result.user.getIdToken();
+      if (currentUser) {
+        try {
+          const idToken = await currentUser.getIdToken();
           const res = await fetch("http://localhost:8080/api/v1/auth/sessions", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -39,7 +34,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             localStorage.setItem("jwt", data.token);
             setToken(data.token);
           }
+        } catch (err) {
+          console.error("Failed to sync session JWT on auth state change", err);
         }
+      } else {
+        localStorage.removeItem("jwt");
+        setToken(null);
+      }
+      setLoading(false);
+    });
+
+    const handleRedirect = async () => {
+      try {
+        await getRedirectResult(auth);
       } catch (err) {
         console.error("Redirect login failed", err);
       }

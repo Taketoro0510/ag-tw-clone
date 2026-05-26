@@ -8,9 +8,12 @@ type Post struct {
 	Body       string
 	MediaType  *string
 	MediaPath  *string
-	MediaURL   *string
-	CreatedAt  time.Time
-	DeletedAt  *time.Time
-	LikeCount  int
-	LikedByMe  bool
+	MediaURL       *string
+	CreatedAt      time.Time
+	DeletedAt      *time.Time
+	LikeCount      int
+	LikedByMe      bool
+	BookmarkCount  int
+	BookmarkedByMe bool
+	Author         *User
 }

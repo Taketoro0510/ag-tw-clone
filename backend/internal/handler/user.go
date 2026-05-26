@@ -21,13 +21,16 @@ func NewUserHandler(uc usecase.UserUseCase) *UserHandler {
 
 func toUserDTO(u *domain.User) dto.User {
 	return dto.User{
-		ID:          u.ID,
-		FirebaseUID: u.FirebaseUID,
-		Email:       u.Email,
-		DisplayName: u.DisplayName,
-		AvatarURL:   u.AvatarURL,
-		CreatedAt:   u.CreatedAt,
-		UpdatedAt:   u.UpdatedAt,
+		ID:             u.ID,
+		FirebaseUID:    u.FirebaseUID,
+		Email:          u.Email,
+		DisplayName:    u.DisplayName,
+		AvatarURL:      u.AvatarURL,
+		CreatedAt:      u.CreatedAt,
+		UpdatedAt:      u.UpdatedAt,
+		FollowersCount: u.FollowersCount,
+		FollowingCount: u.FollowingCount,
+		FollowedByMe:   u.FollowedByMe,
 	}
 }
 
@@ -130,15 +133,23 @@ func (h *UserHandler) ListUserPosts(c echo.Context) error {
 }
 
 func toPostDTO(p *domain.Post) dto.Post {
+	var author *dto.User
+	if p.Author != nil {
+		u := toUserDTO(p.Author)
+		author = &u
+	}
 	return dto.Post{
-		ID:        p.ID,
-		AuthorID:  p.AuthorID,
-		Body:      p.Body,
-		MediaType: p.MediaType,
-		MediaPath: p.MediaPath,
-		MediaURL:  p.MediaURL,
-		LikeCount: p.LikeCount,
-		LikedByMe: p.LikedByMe,
-		CreatedAt: p.CreatedAt,
+		ID:             p.ID,
+		AuthorID:       p.AuthorID,
+		Author:         author,
+		Body:           p.Body,
+		MediaType:      p.MediaType,
+		MediaPath:      p.MediaPath,
+		MediaURL:       p.MediaURL,
+		LikeCount:      p.LikeCount,
+		LikedByMe:      p.LikedByMe,
+		BookmarkCount:  p.BookmarkCount,
+		BookmarkedByMe: p.BookmarkedByMe,
+		CreatedAt:      p.CreatedAt,
 	}
 }
