@@ -14,6 +14,17 @@ services:
       timeout: 5s
       retries: 10
 
+  firebase:
+    build:
+      context: .
+      dockerfile: Dockerfile.firebase
+    ports:
+      - "9099:9099"
+      - "9199:9199"
+      - "4000:4000"
+    volumes:
+      - ./firebase.json:/app/firebase.json
+
   api:
     build:
       context: ./backend
@@ -39,6 +50,32 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      firebase:
+        condition: service_started
+
+  api_test:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    environment:
+      DATABASE_URL: postgres://app:app@db:5432/app?sslmode=disable
+      JWT_SECRET: dev-secret-do-not-use-in-prod-xxxxxxxxxxxxxxxx
+      FIREBASE_PROJECT_ID: demo-sns
+      FIREBASE_AUTH_EMULATOR_HOST: host.docker.internal:9099
+      FIREBASE_STORAGE_EMULATOR_HOST: host.docker.internal:9199
+      CORS_ALLOWED_ORIGINS: http://localhost:5173
+    volumes:
+      - ./backend:/app
+      - go-mod-cache:/go/pkg/mod
+      - go-build-cache:/root/.cache/go-build
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      db:
+        condition: service_healthy
+      firebase:
+        condition: service_started
+    entrypoint: ["bash", "/app/test_entrypoint.sh"]
 
 volumes:
   db-data:

@@ -39,7 +39,7 @@ func (h *FollowHandler) FollowUser(c echo.Context) error {
 	if err != nil {
 		if errors.Is(err, domain.ErrUserNotFound) {
 			return c.JSON(http.StatusNotFound, dto.ErrorResponse{
-				Error: dto.ErrorDetail{Code: "NOT_FOUND", Message: "user not found"},
+				Error: dto.ErrorDetail{Code: "NOT_FOUND", Message: "ユーザーが見つかりません"},
 			})
 		}
 		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{
@@ -67,7 +67,7 @@ func (h *FollowHandler) UnfollowUser(c echo.Context) error {
 	err := h.followUC.UnfollowUser(c.Request().Context(), followerID, followeeID)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to unfollow user"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "フォロー解除に失敗しました"},
 		})
 	}
 	return c.NoContent(http.StatusNoContent)
@@ -89,7 +89,7 @@ func (h *FollowHandler) ListFollowers(c echo.Context) error {
 	users, err := h.followUC.GetFollowers(c.Request().Context(), userID)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to get followers"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "フォロワー一覧の取得に失敗しました"},
 		})
 	}
 
@@ -116,7 +116,7 @@ func (h *FollowHandler) ListFollowings(c echo.Context) error {
 	users, err := h.followUC.GetFollowings(c.Request().Context(), userID)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to get followed users"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "フォロー一覧の取得に失敗しました"},
 		})
 	}
 

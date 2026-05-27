@@ -4,7 +4,8 @@ RUN apk add --no-cache git curl bash nodejs npm
 
 RUN go install github.com/air-verse/air@latest \
  && go install github.com/swaggo/swag/cmd/swag@latest \
- && go install golang.org/x/vuln/cmd/govulncheck@latest
+ && go install golang.org/x/vuln/cmd/govulncheck@latest \
+ && go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
 WORKDIR /app
 

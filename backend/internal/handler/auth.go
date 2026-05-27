@@ -33,18 +33,18 @@ func (h *AuthHandler) CreateSession(c echo.Context) error {
 	var req dto.CreateSessionRequest
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "VALIDATION_ERROR", Message: "invalid body"},
+			Error: dto.ErrorDetail{Code: "VALIDATION_ERROR", Message: "リクエストボディが不正です"},
 		})
 	}
 	token, err := h.authUC.Login(c.Request().Context(), req.IdToken)
 	if err != nil {
 		if errors.Is(err, domain.ErrUnauthorized) {
 			return c.JSON(http.StatusUnauthorized, dto.ErrorResponse{
-				Error: dto.ErrorDetail{Code: "UNAUTHORIZED", Message: "invalid id token"},
+				Error: dto.ErrorDetail{Code: "UNAUTHORIZED", Message: "認証トークンが不正です"},
 			})
 		}
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to login"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "ログインに失敗しました"},
 		})
 	}
 	return c.JSON(http.StatusOK, dto.CreateSessionResponse{Token: token})

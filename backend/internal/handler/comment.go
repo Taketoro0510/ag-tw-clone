@@ -31,7 +31,7 @@ func (h *CommentHandler) ListComments(c echo.Context) error {
 	comments, err := h.commentUC.GetCommentsByPostID(c.Request().Context(), userID, postID, cursor, limit)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to list comments"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "コメント一覧の取得に失敗しました"},
 		})
 	}
 
@@ -53,7 +53,7 @@ func (h *CommentHandler) CreateComment(c echo.Context) error {
 	var req dto.CreateCommentRequest
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "VALIDATION_ERROR", Message: "invalid body"},
+			Error: dto.ErrorDetail{Code: "VALIDATION_ERROR", Message: "リクエストボディが不正です"},
 		})
 	}
 
@@ -61,16 +61,16 @@ func (h *CommentHandler) CreateComment(c echo.Context) error {
 	if err != nil {
 		if errors.Is(err, domain.ErrValidation) {
 			return c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-				Error: dto.ErrorDetail{Code: "VALIDATION_ERROR", Message: "validation failed"},
+				Error: dto.ErrorDetail{Code: "VALIDATION_ERROR", Message: "バリデーションに失敗しました"},
 			})
 		}
 		if errors.Is(err, domain.ErrPostNotFound) {
 			return c.JSON(http.StatusNotFound, dto.ErrorResponse{
-				Error: dto.ErrorDetail{Code: "NOT_FOUND", Message: "post not found"},
+				Error: dto.ErrorDetail{Code: "NOT_FOUND", Message: "投稿が見つかりません"},
 			})
 		}
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to create comment"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "コメントの作成に失敗しました"},
 		})
 	}
 	return c.JSON(http.StatusCreated, toCommentDTO(comment))
@@ -84,11 +84,11 @@ func (h *CommentHandler) DeleteComment(c echo.Context) error {
 	if err != nil {
 		if errors.Is(err, domain.ErrForbidden) {
 			return c.JSON(http.StatusForbidden, dto.ErrorResponse{
-				Error: dto.ErrorDetail{Code: "FORBIDDEN", Message: "cannot delete others comment"},
+				Error: dto.ErrorDetail{Code: "FORBIDDEN", Message: "他人のコメントは削除できません"},
 			})
 		}
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to delete comment"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "コメントの削除に失敗しました"},
 		})
 	}
 	return c.NoContent(http.StatusNoContent)
@@ -100,7 +100,7 @@ func (h *CommentHandler) LikeComment(c echo.Context) error {
 	err := h.commentUC.LikeComment(c.Request().Context(), userID, id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to like comment"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "いいねに失敗しました"},
 		})
 	}
 	return c.NoContent(http.StatusNoContent)
@@ -112,7 +112,7 @@ func (h *CommentHandler) UnlikeComment(c echo.Context) error {
 	err := h.commentUC.UnlikeComment(c.Request().Context(), userID, id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to unlike comment"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "いいねの解除に失敗しました"},
 		})
 	}
 	return c.NoContent(http.StatusNoContent)
@@ -124,7 +124,7 @@ func (h *CommentHandler) BookmarkComment(c echo.Context) error {
 	err := h.commentUC.BookmarkComment(c.Request().Context(), userID, id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to bookmark comment"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "ブックマークに失敗しました"},
 		})
 	}
 	return c.NoContent(http.StatusNoContent)
@@ -136,7 +136,7 @@ func (h *CommentHandler) UnbookmarkComment(c echo.Context) error {
 	err := h.commentUC.UnbookmarkComment(c.Request().Context(), userID, id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to unbookmark comment"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "ブックマーク解除に失敗しました"},
 		})
 	}
 	return c.NoContent(http.StatusNoContent)

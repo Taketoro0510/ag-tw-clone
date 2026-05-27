@@ -49,7 +49,7 @@ func (h *UserHandler) GetMe(c echo.Context) error {
 	user, err := h.userUC.GetProfile(c.Request().Context(), userID, userID)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "UNAUTHORIZED", Message: "user not found"},
+			Error: dto.ErrorDetail{Code: "UNAUTHORIZED", Message: "ユーザーが見つかりません"},
 		})
 	}
 	return c.JSON(http.StatusOK, toUserDTO(user))
@@ -74,11 +74,11 @@ func (h *UserHandler) GetUser(c echo.Context) error {
 	if err != nil {
 		if errors.Is(err, domain.ErrUserNotFound) {
 			return c.JSON(http.StatusNotFound, dto.ErrorResponse{
-				Error: dto.ErrorDetail{Code: "RESOURCE_NOT_FOUND", Message: "user not found"},
+				Error: dto.ErrorDetail{Code: "RESOURCE_NOT_FOUND", Message: "ユーザーが見つかりません"},
 			})
 		}
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "internal error"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "内部エラーが発生しました"},
 		})
 	}
 	return c.JSON(http.StatusOK, toUserDTO(user))
@@ -112,11 +112,11 @@ func (h *UserHandler) ListUserPosts(c echo.Context) error {
 	if err != nil {
 		if errors.Is(err, domain.ErrUserNotFound) {
 			return c.JSON(http.StatusNotFound, dto.ErrorResponse{
-				Error: dto.ErrorDetail{Code: "RESOURCE_NOT_FOUND", Message: "user not found"},
+				Error: dto.ErrorDetail{Code: "RESOURCE_NOT_FOUND", Message: "ユーザーが見つかりません"},
 			})
 		}
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "internal error"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "内部エラーが発生しました"},
 		})
 	}
 

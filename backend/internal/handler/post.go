@@ -44,7 +44,7 @@ func (h *PostHandler) ListPosts(c echo.Context) error {
 	posts, err := h.postUC.GetTimeline(c.Request().Context(), userID, cursor, limit)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to list posts"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "投稿一覧の取得に失敗しました"},
 		})
 	}
 
@@ -78,7 +78,7 @@ func (h *PostHandler) CreatePost(c echo.Context) error {
 	var req dto.CreatePostRequest
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "VALIDATION_ERROR", Message: "invalid body"},
+			Error: dto.ErrorDetail{Code: "VALIDATION_ERROR", Message: "リクエストボディが不正です"},
 		})
 	}
 
@@ -86,11 +86,11 @@ func (h *PostHandler) CreatePost(c echo.Context) error {
 	if err != nil {
 		if errors.Is(err, domain.ErrValidation) {
 			return c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-				Error: dto.ErrorDetail{Code: "VALIDATION_ERROR", Message: "validation failed"},
+				Error: dto.ErrorDetail{Code: "VALIDATION_ERROR", Message: "バリデーションに失敗しました"},
 			})
 		}
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to create post"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "投稿の作成に失敗しました"},
 		})
 	}
 	return c.JSON(http.StatusCreated, toPostDTO(post))
@@ -115,11 +115,11 @@ func (h *PostHandler) GetPost(c echo.Context) error {
 	if err != nil {
 		if errors.Is(err, domain.ErrPostNotFound) {
 			return c.JSON(http.StatusNotFound, dto.ErrorResponse{
-				Error: dto.ErrorDetail{Code: "RESOURCE_NOT_FOUND", Message: "post not found"},
+				Error: dto.ErrorDetail{Code: "RESOURCE_NOT_FOUND", Message: "投稿が見つかりません"},
 			})
 		}
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to get post"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "投稿の取得に失敗しました"},
 		})
 	}
 	return c.JSON(http.StatusOK, toPostDTO(post))
@@ -145,16 +145,16 @@ func (h *PostHandler) DeletePost(c echo.Context) error {
 	if err != nil {
 		if errors.Is(err, domain.ErrForbidden) {
 			return c.JSON(http.StatusForbidden, dto.ErrorResponse{
-				Error: dto.ErrorDetail{Code: "FORBIDDEN", Message: "cannot delete others post"},
+				Error: dto.ErrorDetail{Code: "FORBIDDEN", Message: "他人の投稿は削除できません"},
 			})
 		}
 		if errors.Is(err, domain.ErrPostNotFound) {
 			return c.JSON(http.StatusNotFound, dto.ErrorResponse{
-				Error: dto.ErrorDetail{Code: "RESOURCE_NOT_FOUND", Message: "post not found"},
+				Error: dto.ErrorDetail{Code: "RESOURCE_NOT_FOUND", Message: "投稿が見つかりません"},
 			})
 		}
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to delete post"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "投稿の削除に失敗しました"},
 		})
 	}
 	return c.NoContent(http.StatusNoContent)
@@ -179,7 +179,7 @@ func (h *PostHandler) LikePost(c echo.Context) error {
 	err := h.likeUC.LikePost(c.Request().Context(), userID, id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to like post"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "いいねに失敗しました"},
 		})
 	}
 	return c.NoContent(http.StatusNoContent)
@@ -204,7 +204,7 @@ func (h *PostHandler) UnlikePost(c echo.Context) error {
 	err := h.likeUC.UnlikePost(c.Request().Context(), userID, id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to unlike post"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "いいねの解除に失敗しました"},
 		})
 	}
 	return c.NoContent(http.StatusNoContent)

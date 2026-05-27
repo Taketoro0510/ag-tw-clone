@@ -34,7 +34,7 @@ func (h *BookmarkHandler) BookmarkPost(c echo.Context) error {
 	err := h.bmUC.BookmarkPost(c.Request().Context(), userID, id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to bookmark post"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "ブックマークに失敗しました"},
 		})
 	}
 	return c.NoContent(http.StatusNoContent)
@@ -57,7 +57,7 @@ func (h *BookmarkHandler) UnbookmarkPost(c echo.Context) error {
 	err := h.bmUC.UnbookmarkPost(c.Request().Context(), userID, id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to unbookmark post"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "ブックマーク解除に失敗しました"},
 		})
 	}
 	return c.NoContent(http.StatusNoContent)
@@ -86,7 +86,7 @@ func (h *BookmarkHandler) ListBookmarks(c echo.Context) error {
 	posts, err := h.bmUC.ListBookmarks(c.Request().Context(), userID, cursor, limit)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to list bookmarked posts"},
+			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "ブックマーク一覧の取得に失敗しました"},
 		})
 	}
 
