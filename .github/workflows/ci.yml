@@ -68,7 +68,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./frontend
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Build frontend
         working-directory: ./frontend
@@ -124,6 +124,7 @@ jobs:
           DATABASE_URL: postgres://app:app@localhost:5432/app?sslmode=disable
           JWT_SECRET: dev-secret-do-not-use-in-prod-xxxxxxxxxxxxxxxx
           FIREBASE_PROJECT_ID: demo-sns
+          FIREBASE_AUTH_EMULATOR_HOST: 127.0.0.1:9099
           CORS_ALLOWED_ORIGINS: http://localhost:5173
         run: |
           go build -o api-server ./cmd/server
@@ -135,7 +136,7 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: ./frontend
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Install Playwright Browsers
         working-directory: ./frontend
