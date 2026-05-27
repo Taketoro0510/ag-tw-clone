@@ -77,70 +77,22 @@ jobs:
   e2e-test:
     name: E2E Tests
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: app
-          POSTGRES_PASSWORD: app
-          POSTGRES_DB: app
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U app -d app"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 10
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.25'
-          cache-dependency-path: backend/go.sum
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install golang-migrate
+      - name: Start Backend Services
         run: |
-          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.0/migrate.linux-amd64.tar.gz | tar xvz
-          sudo mv migrate /usr/local/bin/migrate
-
-      - name: Run migrations
-        working-directory: ./backend
-        run: migrate -path migrations -database "postgres://app:app@localhost:5432/app?sslmode=disable" up
-
-      - name: Install Firebase CLI
-        run: npm install -g firebase-tools
-
-      - name: Start Firebase Emulator
-        run: |
-          firebase emulators:start --project demo-sns &
-          echo "Waiting for Firebase Emulator..."
-          timeout 60 bash -c 'until curl -s http://127.0.0.1:9099; do sleep 1; done'
-
-      - name: Start API Server
-        working-directory: ./backend
-        env:
-          DATABASE_URL: postgres://app:app@localhost:5432/app?sslmode=disable
-          JWT_SECRET: dev-secret-do-not-use-in-prod-xxxxxxxxxxxxxxxx
-          FIREBASE_PROJECT_ID: demo-sns
-          FIREBASE_AUTH_EMULATOR_HOST: 127.0.0.1:9099
-          CORS_ALLOWED_ORIGINS: http://localhost:5173
-        run: |
-          go build -o api-server ./cmd/server
-          ./api-server &
+          docker compose up -d db firebase
           
-          echo "Waiting for API server..."
-          timeout 30 bash -c 'until curl -s http://localhost:8080/api/v1/healthz; do sleep 1; done'
+          echo "Running migrations (this will build the image first)..."
+          docker compose run --rm api_test echo "Migrations complete"
+          
+          echo "Starting API Server..."
+          docker compose up -d api
+          
+          echo "Waiting for API Server..."
+          timeout 60 bash -c 'until curl -s http://localhost:8080/api/v1/healthz; do sleep 1; done'
           echo "API server is up!"
 
       - name: Install frontend dependencies
