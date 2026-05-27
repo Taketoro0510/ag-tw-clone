@@ -46,7 +46,7 @@ func ErrorHandler(logger *slog.Logger) echo.HTTPErrorHandler {
 	return func(err error, c echo.Context) {
 		code := http.StatusInternalServerError
 		msg := "Internal Server Error"
-		
+
 		if he, ok := err.(*echo.HTTPError); ok {
 			code = he.Code
 			msg = he.Message.(string)

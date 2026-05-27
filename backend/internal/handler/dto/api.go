@@ -16,8 +16,8 @@ type User struct {
 }
 
 type Post struct {
-	ID         string    `json:"id"`
-	AuthorID   string    `json:"authorId"`
+	ID             string    `json:"id"`
+	AuthorID       string    `json:"authorId"`
 	Author         *User     `json:"author,omitempty"`
 	Body           string    `json:"body"`
 	MediaType      *string   `json:"mediaType" enums:"image,video"`

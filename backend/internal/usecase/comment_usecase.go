@@ -41,7 +41,7 @@ func (u *commentUseCase) CreateComment(ctx context.Context, userID, postID, body
 	if err != nil || post == nil {
 		return nil, domain.ErrPostNotFound
 	}
-	
+
 	id, _ := uuid.NewV7()
 	comment := &domain.Comment{
 		ID:        id.String(),
@@ -56,7 +56,7 @@ func (u *commentUseCase) CreateComment(ctx context.Context, userID, postID, body
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Add counts
 	comment.LikeCount = 0
 	comment.LikedByMe = false

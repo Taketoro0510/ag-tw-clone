@@ -45,11 +45,11 @@ func (r *commentRepository) CreateComment(ctx context.Context, comment *domain.C
 func (r *commentRepository) GetCommentsByPostID(ctx context.Context, postID string, cursor string, limit int) ([]*domain.Comment, error) {
 	var models []model.Comment
 	query := r.db.WithContext(ctx).Where("post_id = ? AND deleted_at IS NULL", postID).Preload("Author")
-	
+
 	if cursor != "" {
 		query = query.Where("id < ?", cursor)
 	}
-	
+
 	err := query.Order("id DESC").Limit(limit).Find(&models).Error
 	if err != nil {
 		return nil, err

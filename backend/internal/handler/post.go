@@ -47,7 +47,7 @@ func (h *PostHandler) ListPosts(c echo.Context) error {
 			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to list posts"},
 		})
 	}
-	
+
 	items := make([]dto.Post, len(posts))
 	for i, p := range posts {
 		items[i] = toPostDTO(p)
@@ -81,7 +81,7 @@ func (h *PostHandler) CreatePost(c echo.Context) error {
 			Error: dto.ErrorDetail{Code: "VALIDATION_ERROR", Message: "invalid body"},
 		})
 	}
-	
+
 	post, err := h.postUC.CreatePost(c.Request().Context(), userID, req.Body, req.MediaType, req.MediaPath, nil)
 	if err != nil {
 		if errors.Is(err, domain.ErrValidation) {

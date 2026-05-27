@@ -34,7 +34,7 @@ func (h *CommentHandler) ListComments(c echo.Context) error {
 			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "failed to list comments"},
 		})
 	}
-	
+
 	items := make([]dto.Comment, len(comments))
 	for i, c := range comments {
 		items[i] = toCommentDTO(c)
@@ -56,7 +56,7 @@ func (h *CommentHandler) CreateComment(c echo.Context) error {
 			Error: dto.ErrorDetail{Code: "VALIDATION_ERROR", Message: "invalid body"},
 		})
 	}
-	
+
 	comment, err := h.commentUC.CreateComment(c.Request().Context(), userID, postID, req.Body)
 	if err != nil {
 		if errors.Is(err, domain.ErrValidation) {
@@ -79,7 +79,7 @@ func (h *CommentHandler) CreateComment(c echo.Context) error {
 func (h *CommentHandler) DeleteComment(c echo.Context) error {
 	commentID := c.Param("commentId")
 	userID := c.Get("userID").(string)
-	
+
 	err := h.commentUC.DeleteComment(c.Request().Context(), userID, commentID)
 	if err != nil {
 		if errors.Is(err, domain.ErrForbidden) {
@@ -148,7 +148,7 @@ func toCommentDTO(c *domain.Comment) dto.Comment {
 		u := toUserDTO(c.Author)
 		author = &u
 	}
-	
+
 	return dto.Comment{
 		ID:             c.ID,
 		PostID:         c.PostID,

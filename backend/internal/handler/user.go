@@ -119,7 +119,7 @@ func (h *UserHandler) ListUserPosts(c echo.Context) error {
 			Error: dto.ErrorDetail{Code: "INTERNAL_ERROR", Message: "internal error"},
 		})
 	}
-	
+
 	items := make([]dto.Post, len(posts))
 	for i, p := range posts {
 		items[i] = toPostDTO(p)

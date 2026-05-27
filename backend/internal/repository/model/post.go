@@ -11,5 +11,5 @@ type Post struct {
 	MediaURL  *string
 	CreatedAt time.Time
 	DeletedAt *time.Time
-	Author    User   `gorm:"foreignKey:AuthorID"`
+	Author    User `gorm:"foreignKey:AuthorID"`
 }

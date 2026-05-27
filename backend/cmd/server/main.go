@@ -127,16 +127,16 @@ func main() {
 	{
 		v1.GET("/healthz", handler.Healthz)
 		v1.POST("/auth/sessions", authHandler.CreateSession)
-		
+
 		// Protected routes
 		protected := v1.Group("")
 		protected.Use(middleware.Auth(jwtService))
-		
+
 		protected.GET("/me", userHandler.GetMe)
-		
+
 		// Post rate limit
 		postLimit := middleware.RateLimit(100) // 100 per min
-		
+
 		protected.GET("/posts", postHandler.ListPosts)
 		protected.POST("/posts", postHandler.CreatePost, postLimit)
 		protected.GET("/posts/:id", postHandler.GetPost)
@@ -160,7 +160,7 @@ func main() {
 		protected.DELETE("/users/:id/follow", followHandler.UnfollowUser, postLimit)
 		protected.GET("/users/:id/followers", followHandler.ListFollowers)
 		protected.GET("/users/:id/following", followHandler.ListFollowings)
-		
+
 		protected.GET("/bookmarks", bmHandler.ListBookmarks)
 	}
 
